@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Demo Proc Gen</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="simplex-noise.js"></script>
+        <script src="generator.js"></script>
+        <script>
+            var world = new World(200,200,Math.random());
+            console.log(world);
+        </script>
+        
+    </head>
+    <body>
+        <svg id="grid">
+            
+        </svg>
+        <script>
+           var xmlns = "http://www.w3.org/2000/svg";
+           var svgElement = document.getElementById("grid")
+           var scaling = 20;
+           var sqrt3 = 1.73205080757;
+           svgElement.setAttributeNS(null,"width",200.5*scaling);
+           svgElement.setAttributeNS(null,"height",150.5*scaling);
+           function pointy_hex_corner(centerx,centery, size, i){
+                var angle_deg = 60 * i - 30;
+                var angle_rad = 3.141592 / 180 * angle_deg;
+                return {"x":centerx + size * Math.cos(angle_rad),
+                 "y": centery + size * Math.sin(angle_rad)};
+             }
+             
+           for(var x = 0; x < 200; x++) {
+               for(var y = 0; y < 200; y++) {
+                   var elem = document.createElementNS(xmlns, "polygon");
+                   
+                   var centreX = (x + (0.5) + (0.5*(y % 2)))*0.9*scaling;
+                   var centreY = ((y + 0.75) * 0.75)*scaling;
+                   
+                   elem.setAttributeNS(null,"points",
+                            pointy_hex_corner(centreX,centreY,scaling/2,0).x + "," + pointy_hex_corner(centreX,centreY,scaling/2,0).y + " " +
+                            pointy_hex_corner(centreX,centreY,scaling/2,1).x + "," + pointy_hex_corner(centreX,centreY,scaling/2,1).y + " " +
+                            pointy_hex_corner(centreX,centreY,scaling/2,2).x + "," + pointy_hex_corner(centreX,centreY,scaling/2,2).y + " " +
+                            pointy_hex_corner(centreX,centreY,scaling/2,3).x + "," + pointy_hex_corner(centreX,centreY,scaling/2,3).y + " " +
+                            pointy_hex_corner(centreX,centreY,scaling/2,4).x + "," + pointy_hex_corner(centreX,centreY,scaling/2,4).y + " " +
+                            pointy_hex_corner(centreX,centreY,scaling/2,5).x + "," + pointy_hex_corner(centreX,centreY,scaling/2,5).y + " "  );
+                   
+                   let red = Math.ceil((world.getHexMap()[x][y].getBiomeTemp() * 256) / 5).toString();
+                   let blue = Math.ceil((world.getHexMap()[x][y].getBiomePercipitation() * 256) / 5).toString();
+                   
+                   elem.setAttributeNS(null,"fill", world.getHexMap()[x][y].getBiome().color);
+                   elem.setAttributeNS(null,"stroke", "black");
+                   
+                    svgElement.appendChild(elem);
+                   
+               }
+           }
+        </script>
+    </body>
+</html>
